@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICSRS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, green, yellow);
+            color: blue;
+            margin: 0;
+            padding: 0;
+        }
+        nav {
+            background: darkgreen;
+            padding: 10px;
+            border-radius: 10px;
+            color: white;
+        }
+        nav a {
+            color: yellow;
+            text-decoration: none;
+            margin: 10px;
+            font-weight: bold;
+            padding: 5px 15px;
+            display: inline-block;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+        }
+        .product {
+            background: lightyellow;
+            color: darkgreen;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            width: 45%;
+            display: inline-block;
+        }
+        .product img {
+            width: 150px;
+            height: auto;
+            display: block;
+            margin: 0 auto 10px;
+        }
+        .product h2 {
+            font-size: 1.2em;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: lightgray;
+            border-radius: 5px;
+        }
+        .cart-item button {
+            padding: 5px 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>GLEN COMPUTER SELLING AND REPAIR SERVICES</h1>
+    <nav>
+        <a href="javascript:void(0);" onclick="showTab('PRODUCTS')">Products</a>
+         
+         
+        <a href="javascript:void(0);" onclick="showTab('CART')">Cart</a>
+        <a href="javascript:void(0);" onclick="showTab('MESSAGES')">Messages</a>
+        <a href="javascript:void(0);" onclick="showTab('ACCOUNT')">Account</a>
+        <a href="javascript:void(0);" onclick="showTab('ADMIN')">Admin</a>
+    </nav>
+
+    <!-- Products Tab -->
+    <div id="PRODUCTS" class="tab-content active">
+        <div class="container">
+            <h2>Our Products</h2>
+            <!-- Sample products, can be dynamically generated -->
+            <div class="product"><img src="https://via.placeholder.com/150" alt="HP Pavilion 15"><h3>HP Pavilion 15</h3><p>Intel Core i7, 16GB RAM, 512GB SSD, Ksh 85,000</p><button onclick="addToCart('HP Pavilion 15', 85000)">Add to Cart</button></div>
+            <!-- More products go here -->
+        </div>
+    </div>
+
+    <!-- Cart Tab -->
+    <div id="CART" class="tab-content">
+        <div class="container">
+            <h2>Your Cart</h2>
+            <div id="cart-items"></div>
+            <h3>Total: Ksh <span id="total-price">0</span></h3>
+            <button onclick="makePayment()">Proceed to Payment</button>
+        </div>
+    </div>
+
+    <!-- Messages Tab -->
+    <div id="MESSAGES" class="tab-content">
+        <div class="container">
+            <h2>Messages</h2>
+            <div id="chat-box">
+                <textarea id="user-message" placeholder="Type your message"></textarea><br>
+                <button onclick="sendMessage()">Send Message</button>
+            </div>
+            <div id="feedback">
+                <textarea id="user-feedback" placeholder="Leave feedback for the admin"></textarea><br>
+                <button onclick="sendFeedback()">Submit Feedback</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Tab -->
+    <div id="ACCOUNT" class="tab-content">
+        <div class="container">
+            <h2>Account</h2>
+            <form id="account-form">
+                <input type="email" id="email" placeholder="Email" required><br>
+                <input type="text" id="phone" placeholder="Phone Number" required><br>
+                <input type="text" id="username" placeholder="Username" required><br>
+                <input type="password" id="password" placeholder="Password" required><br>
+                <button type="submit">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Tab -->
+    <div id="ADMIN" class="tab-content">
+        <div class="container">
+            <h2>Admin Panel</h2>
+            <form id="admin-login-form">
+                <input type="text" id="admin-username" placeholder="Admin Username" required><br>
+                <input type="password" id="admin-password" placeholder="Admin Password" required><br>
+                <button type="submit">Login</button>
+            </form>
+            <div id="admin-actions" style="display:none;">
+                <h3>Add New Product</h3>
+                <input type="text" id="product-name" placeholder="Product Name" required><br>
+                <input type="number" id="product-price" placeholder="Product Price" required><br>
+                <input type="file" id="product-image" required><br>
+                <textarea id="product-description" placeholder="Product Description" required></textarea><br>
+                <button onclick="addNewProduct()">Add Product</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+        let total = 0;
+
+        function showTab(tabName) {
+            document.querySelectorAll(".tab-content").forEach(tab => tab.classList.remove("active"));
+            document.getElementById(tabName).classList.add("active");
+        }
+
+        function addToCart(productName, productPrice) {
+            cart.push({ name: productName, price: productPrice });
+            total += productPrice;
+            updateCart();
+        }
+
+        function updateCart() {
+            let cartItemsDiv = document.getElementById('cart-items');
+            cartItemsDiv.innerHTML = '';
+            cart.forEach((item, index) => {
+                cartItemsDiv.innerHTML += `
+                    <div class="cart-item">
+                        <span>${item.name} - Ksh ${item.price}</span>
+                        <button onclick="removeFromCart(${index})">Remove</button>
+                    </div>
+                `;
+            });
+            document.getElementById('total-price').innerText = total;
+        }
+
+        function removeFromCart(index) {
+            total -= cart[index].price;
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        function makePayment() {
+            const mpesaCode = prompt('Enter Mpesa code for verification:');
+            alert('Payment via Mpesa has been initiated. Verification code: ' + mpesaCode);
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('user-message').value;
+            alert('Your message: ' + message);
+        }
+
+        function sendFeedback() {
+            const feedback = document.getElementById('user-feedback').value;
+            alert('Your feedback: ' + feedback);
+        }
+
+        function addNewProduct() {
+            const name = document.getElementById('product-name').value;
+            const price = document.getElementById('product-price').value;
+            const image = document.getElementById('product-image').files[0];
+            const description = document.getElementById('product-description').value;
+
+            // Here you would typically send the product data to the server for storage
+            alert('New product added: ' + name);
+        }
+
+        // Admin login functionality
+        document.getElementById('admin-login-form').onsubmit = function(e) {
+            e.preventDefault();
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+
+            if (username === 'Admin' && password === '#Cracker') {
+                document.getElementById('admin-actions').style.display = 'block';
+                alert('Admin login successful');
+            } else {
+                alert('Invalid admin credentials');
+            }
+        }
+    </script>
+</body>
+</html>
+ 
