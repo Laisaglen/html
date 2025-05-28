@@ -1,0 +1,363 @@
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <title>Quantum Phone Sell and Spare Parts</title>
+   <style>
+     body {
+       margin: 0;
+       font-family: Arial, sans-serif;
+       background-color: lightblue;
+     }
+     header {
+       background-color: #003366;
+       color: white;
+       padding: 15px 20px;
+       font-size: 24px;
+       font-weight: bold;
+       text-align: center;
+     }
+     nav {
+       display: flex;
+       background-color: #004080;
+       padding: 10px 20px;
+       gap: 15px;
+       position: sticky;
+       top: 0;
+       z-index: 100;
+     }
+     nav button {
+       background: none;
+       border: none;
+       color: white;
+       font-size: 16px;
+       cursor: pointer;
+       padding: 8px 15px;
+       border-radius: 5px;
+       transition: background-color 0.3s;
+     }
+     nav button:hover, nav button.active {
+       background-color: #0073e6;
+     }
+     main {
+       padding: 20px;
+       max-width: 900px;
+       margin: auto;
+     }
+     /* Home product grid */
+     .product-grid {
+       display: grid;
+       grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+       gap: 20px;
+     }
+     .product-card {
+       background: white;
+       border-radius: 8px;
+       box-shadow: 0 0 8px rgba(0,0,0,0.15);
+       padding: 10px;
+       text-align: center;
+     }
+     .product-card img {
+       max-width: 100%;
+       height: 150px;
+       object-fit: contain;
+       margin-bottom: 10px;
+     }
+     .product-card button {
+       background-color: #003366;
+       color: white;
+       border: none;
+       padding: 8px 12px;
+       border-radius: 5px;
+       cursor: pointer;
+       font-size: 14px;
+     }
+     .product-card button:hover {
+       background-color: #00509e;
+     }
+     /* Cart */
+     #cart-list {
+       list-style: none;
+       padding: 0;
+     }
+     #cart-list li {
+       background: white;
+       margin-bottom: 10px;
+       padding: 10px;
+       border-radius: 6px;
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       box-shadow: 0 0 5px rgba(0,0,0,0.1);
+     }
+     #cart-list li button {
+       background-color: #c0392b;
+       border: none;
+       color: white;
+       border-radius: 5px;
+       padding: 5px 10px;
+       cursor: pointer;
+     }
+     #cart-list li button:hover {
+       background-color: #e74c3c;
+     }
+     /* Admin form */
+     form {
+       background: white;
+       padding: 20px;
+       border-radius: 8px;
+       box-shadow: 0 0 10px rgba(0,0,0,0.15);
+       max-width: 400px;
+       margin: auto;
+     }
+     form label {
+       display: block;
+       margin-top: 15px;
+       font-weight: bold;
+     }
+     form input {
+       width: 100%;
+       padding: 8px;
+       margin-top: 5px;
+       border-radius: 4px;
+       border: 1px solid #ccc;
+       box-sizing: border-box;
+     }
+     form button {
+       margin-top: 20px;
+       background-color: #003366;
+       color: white;
+       border: none;
+       padding: 10px;
+       border-radius: 5px;
+       cursor: pointer;
+       font-size: 16px;
+       width: 100%;
+     }
+     form button:hover {
+       background-color: #00509e;
+     }
+   </style>
+ </head>
+ <body>
+ 
+   <header>Quantum Phone Sell and Spare Parts</header>
+ 
+   <nav>
+     <button class="tab-btn active" data-tab="home">Home</button>
+     <button class="tab-btn" data-tab="about">About</button>
+     <button class="tab-btn" data-tab="cart">Cart (<span id="cart-count">0</span>)</button>
+     <button class="tab-btn" data-tab="admin">Admin</button>
+   </nav>
+ 
+   <main>
+     <!-- Home Tab -->
+     <section id="home" class="tab-content">
+       <h2>Available Phones and Spare Parts</h2>
+       <div class="product-grid" id="productGrid">
+         <!-- Products will be inserted here dynamically -->
+       </div>
+     </section>
+ 
+     <!-- About Tab -->
+     <section id="about" class="tab-content" style="display:none;">
+       <h2>About Quantum Phone Sell and Spare Parts</h2>
+       <p>Welcome to Quantum Phone Sell and Spare Parts, your one-stop shop for the latest mobile phones and original spare parts. We offer a variety of brands and models at competitive prices in Kenyan Shillings (Ksh). Our mission is to provide quality products and excellent customer service to all our clients.</p>
+       <p>Explore our collection, add products to your cart, and enjoy a seamless shopping experience!</p>
+     </section>
+ 
+     <!-- Cart Tab -->
+     <section id="cart" class="tab-content" style="display:none;">
+       <h2>Your Shopping Cart</h2>
+       <ul id="cart-list">
+         <!-- Cart items here -->
+       </ul>
+       <p id="cart-empty-message">Your cart is empty.</p>
+       <h3>Total: Ksh <span id="cart-total">0</span></h3>
+     </section>
+ 
+     <!-- Admin Tab -->
+     <section id="admin" class="tab-content" style="display:none;">
+       <h2>Admin: Add New Product</h2>
+       <form id="adminForm">
+         <label for="productName">Product Name</label>
+         <input type="text" id="productName" required />
+ 
+         <label for="productPrice">Price (Ksh)</label>
+         <input type="number" id="productPrice" min="0" required />
+ 
+         <label for="productImage">Image URL</label>
+         <input type="url" id="productImage" placeholder="https://example.com/image.jpg" required />
+ 
+         <button type="submit">Add Product</button>
+       </form>
+     </section>
+   </main>
+ 
+   <script>
+     // Initial product list
+     let products = [
+       {
+         id: 1,
+         name: "Samsung Galaxy S21",
+         price: 45000,
+         image: "https://images.samsung.com/is/image/samsung/p6pim/africa/sm-g991bzvdxsa/gallery/africa-galaxy-s21-5g-g991-371973-sm-g991bzvdxsa-368285846?$720_576_PNG$"
+       },
+       {
+         id: 2,
+         name: "iPhone 13",
+         price: 85000,
+         image: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-13-og-202109?wid=1200&hei=630&fmt=jpeg&qlt=95&.v=1631831707000"
+       },
+       {
+         id: 3,
+         name: "Huawei P40",
+         price: 40000,
+         image: "https://consumer.huawei.com/content/dam/huawei-cbg-site/common/mkt/pdp/phones/p40-pro/images/kv-phone.png"
+       },
+       {
+         id: 4,
+         name: "Phone Screen Replacement",
+         price: 3500,
+         image: "https://cdn-icons-png.flaticon.com/512/1086/1086932.png"
+       },
+       {
+         id: 5,
+         name: "Battery Spare Part",
+         price: 2500,
+         image: "https://cdn-icons-png.flaticon.com/512/992/992700.png"
+       }
+     ];
+ 
+     let cart = [];
+ 
+     // Select DOM elements
+     const productGrid = document.getElementById('productGrid');
+     const cartList = document.getElementById('cart-list');
+     const cartTotalElem = document.getElementById('cart-total');
+     const cartCountElem = document.getElementById('cart-count');
+     const cartEmptyMsg = document.getElementById('cart-empty-message');
+ 
+     // Render products in Home tab
+     function renderProducts() {
+       productGrid.innerHTML = '';
+       products.forEach(product => {
+         const card = document.createElement('div');
+         card.className = 'product-card';
+ 
+         card.innerHTML = `
+           <img src="${product.image}" alt="${product.name}" />
+           <h3>${product.name}</h3>
+           <p>Price: Ksh ${product.price.toLocaleString()}</p>
+           <button data-id="${product.id}">Add to Cart</button>
+         `;
+ 
+         productGrid.appendChild(card);
+       });
+     }
+ 
+     // Render cart
+     function renderCart() {
+       cartList.innerHTML = '';
+       if(cart.length === 0) {
+         cartEmptyMsg.style.display = 'block';
+         cartTotalElem.textContent = '0';
+         cartCountElem.textContent = '0';
+         return;
+       }
+       cartEmptyMsg.style.display = 'none';
+ 
+       cart.forEach((item, index) => {
+         const li = document.createElement('li');
+         li.innerHTML = `
+           ${item.name} - Ksh ${item.price.toLocaleString()}
+           <button data-index="${index}">Remove</button>
+         `;
+         cartList.appendChild(li);
+       });
+ 
+       // Calculate total
+       const total = cart.reduce((sum, item) => sum + item.price, 0);
+       cartTotalElem.textContent = total.toLocaleString();
+       cartCountElem.textContent = cart.length;
+     }
+ 
+     // Add to cart handler
+     productGrid.addEventListener('click', (e) => {
+       if(e.target.tagName === 'BUTTON') {
+         const id = parseInt(e.target.getAttribute('data-id'));
+         const product = products.find(p => p.id === id);
+         if(product) {
+           cart.push(product);
+           renderCart();
+           alert(`${product.name} added to cart!`);
+         }
+       }
+     });
+ 
+     // Remove from cart handler
+     cartList.addEventListener('click', (e) => {
+       if(e.target.tagName === 'BUTTON') {
+         const index = parseInt(e.target.getAttribute('data-index'));
+         cart.splice(index, 1);
+         renderCart();
+       }
+     });
+ 
+     // Tab navigation logic
+     const tabs = document.querySelectorAll('nav button');
+     const tabContents = document.querySelectorAll('.tab-content');
+ 
+     tabs.forEach(tab => {
+       tab.addEventListener('click', () => {
+         tabs.forEach(t => t.classList.remove('active'));
+         tab.classList.add('active');
+         const target = tab.getAttribute('data-tab');
+         tabContents.forEach(section => {
+           section.style.display = (section.id === target) ? 'block' : 'none';
+         });
+       });
+     });
+ 
+     // Admin form submit
+     const adminForm = document.getElementById('adminForm');
+     adminForm.addEventListener('submit', e => {
+       e.preventDefault();
+ 
+       const name = document.getElementById('productName').value.trim();
+       const price = parseFloat(document.getElementById('productPrice').value);
+       const image = document.getElementById('productImage').value.trim();
+ 
+       if(!name || isNaN(price) || !image) {
+         alert('Please fill all fields correctly.');
+         return;
+       }
+ 
+       const newProduct = {
+         id: products.length ? products[products.length - 1].id + 1 : 1,
+         name,
+         price,
+         image
+       };
+ 
+       products.push(newProduct);
+       renderProducts();
+       alert('Product added successfully!');
+       adminForm.reset();
+ 
+       // Automatically switch to Home tab so you see the new product
+       tabs.forEach(t => t.classList.remove('active'));
+       document.querySelector('nav button[data-tab="home"]').classList.add('active');
+       tabContents.forEach(section => {
+         section.style.display = (section.id === 'home') ? 'block' : 'none';
+       });
+     });
+ 
+     // Initial render
+     renderProducts();
+     renderCart();
+   </script>
+ 
+ </body>
+ </html>
