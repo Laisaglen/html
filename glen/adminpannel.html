@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LGK Admin Panel</title>
+   <link rel="stylesheet" href="styles.css" />
+  <style>
+    
+
+    .message-list {
+      list-style: none;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .message-item {
+      border-bottom: 1px solid #ddd;
+      padding: 1rem 0;
+    }
+
+    .msg-header {
+      font-weight: bold;
+      color: #222;
+    }
+
+    .msg-email {
+      font-size: 0.9em;
+      color: #555;
+    }
+
+    .msg-body {
+      margin-top: 0.5rem;
+      color: #444;
+    }
+
+     
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>
+      <a href="index.html" style="color:inherit;text-decoration:none;">LGK Admin Panel</a>
+    </h1>
+    <p>Welcome, Admin</p>
+    <form action="#" method="get" class="search-form">
+      <input
+        type="search"
+        id="search"
+        name="q"
+        placeholder="Search..."
+        aria-label="Search"
+      />
+      <button type="submit">🔍</button>
+    </form>
+    <button
+      id="menu-btn"
+      aria-label="Toggle menu"
+      aria-expanded="false"
+      aria-controls="nav-links"
+    >
+      ☰
+    </button>
+    <nav id="nav-links" role="menu" aria-labelledby="menu-btn">
+      <a href="index.html" role="menuitem" tabindex="-1">Home</a>
+      <a href="about.html" role="menuitem" tabindex="-1">About</a>
+      <a href="contact.html" role="menuitem" tabindex="-1">Contact</a>
+      <a href="feedback.html" role="menuitem" tabindex="-1">Feedback</a>
+    </nav>
+  </header>
+  <main class="main admin-main">
+      <div class="card">
+        <h2>Feedback Messages</h2>
+        <ul class="message-list">
+          <li class="message-item">
+            <div class="msg-header">John Doe <span class="msg-email">&lt;john@example.com&gt;</span></div>
+            <div class="msg-body">Great service! Thank you.</div>
+          </li>
+          <li class="message-item">
+            <div class="msg-header">Jane Smith <span class="msg-email">&lt;jane@example.com&gt;</span></div>
+            <div class="msg-body">Can you help me with my laptop?</div>
+          </li>
+          <li class="message-item">
+            <div class="msg-header">Michael Brown <span class="msg-email">&lt;michael@example.com&gt;</span></div>
+            <div class="msg-body">Your website is very helpful.</div>
+          </li>
+        </ul>
+        <p style="color:#777; font-size:0.9rem; margin-top:1.5rem;">(Connect to your backend to load real messages.)</p>
+      </div>
+    </main>
+  <footer>
+    &copy; 2025 LGK TECH SOLUTIONS. All rights reserved.
+  </footer>
+  <script src="main.js"></script>
+</body>
+</html>

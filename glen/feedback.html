@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LGK TECH SOLUTIONS</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <video class="bg-video" autoplay loop muted playsinline>
+    <source src="10130349-hd_1920_1080_30fps.mp4" type="video/mp4" />
+    <!-- Fallback for browsers that don't support video -->
+  </video>
+
+  <header>
+    <h1 class="site-title"><a href="index.html">LGK TECH SOLUTIONS</a></h1>
+    <form action="#" method="get" class="search-form">
+      <input
+        type="search"
+        id="search"
+        name="q"
+        placeholder="Search..."
+        aria-label="Search"
+      />
+      <button type="submit">🔍</button>
+    </form>
+    <button
+      id="menu-btn"
+      aria-label="Toggle menu"
+      aria-expanded="false"
+      aria-controls="nav-links"
+    >
+      ☰
+    </button>
+    <nav id="nav-links" role="menu" aria-labelledby="menu-btn">
+      <a href="index.html" role="menuitem" tabindex="-1">Home</a>
+      <a href="about.html" role="menuitem" tabindex="-1">About</a>
+      <a href="contact.html" role="menuitem" tabindex="-1">Contact</a>
+      <a href="feedback.html" role="menuitem" tabindex="-1">Feedback</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="main-content center-content feedback-center">
+      <h2>Feedback</h2>
+      <form action="mailto:lgktechsolutions@gmail.com" method="POST" enctype="text/plain">
+        <label for="name">Name:</label><br />
+        <input type="text" id="name" name="name" required placeholder="Your name" /><br /><br />
+
+        <label>Rate our service:</label><br />
+        <div id="star-rating" style="font-size:2rem; margin-bottom:1rem;">
+          <span class="star" data-value="1">&#9734;</span>
+          <span class="star" data-value="2">&#9734;</span>
+          <span class="star" data-value="3">&#9734;</span>
+          <span class="star" data-value="4">&#9734;</span>
+          <span class="star" data-value="5">&#9734;</span>
+        </div>
+        <input type="hidden" id="rating" name="rating" required />
+
+        <label for="reason">Reason for your rating (max 500 characters):</label><br />
+        <textarea
+          id="reason"
+          name="reason"
+          maxlength="500"
+          required
+          placeholder="Tell us why you gave this rating..."
+          rows="6"
+          cols="40"
+        ></textarea><br /><br />
+
+        <button type="submit">Submit Feedback</button>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 LGK TECH SOLUTIONS</p>
+  </footer>
+  <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LGK TECH SOLUTIONS</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <video class="bg-video" autoplay loop muted playsinline>
+    <source src="10130349-hd_1920_1080_30fps.mp4" type="video/mp4" />
+    <!-- Fallback for browsers that don't support video -->
+  </video>
+
+  <header>
+    <h1 class="site-title"><a href="index.html">LGK TECH SOLUTIONS</a></h1>
+    <form action="#" method="get" class="search-form">
+      <input
+        type="search"
+        id="search"
+        name="q"
+        placeholder="Search..."
+        aria-label="Search"
+      />
+      <button type="submit">🔍</button>
+    </form>
+    <button
+      id="menu-btn"
+      aria-label="Toggle menu"
+      aria-expanded="false"
+      aria-controls="nav-links"
+    >
+      ☰
+    </button>
+    <nav id="nav-links" role="menu" aria-labelledby="menu-btn">
+      <a href="index.html" role="menuitem" tabindex="-1">Home</a>
+      <a href="about.html" role="menuitem" tabindex="-1">About</a>
+      <a href="contact.html" role="menuitem" tabindex="-1">Contact</a>
+      <a href="feedback.html" role="menuitem" tabindex="-1">Feedback</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="main-content center-content">
+      <div class="hero-header">
+        <h1 class="site-title">LGK TECH SOLUTIONS</h1>
+        <h3 class="tagline">Your one stop for all your Tech problems</h3>
+      </div>
+      <p>We provide the following services to our customers:</p>
+      <div class="photo-gallery">
+        <figure>
+          <img src="photos/web.webp" alt="Website Development" />
+          <figcaption>Highly attractive website development</figcaption>
+        </figure>
+        <figure>
+          <img src="photos/update.webp" alt="Computer Upgrading" />
+          <figcaption>Computer upgrading</figcaption>
+        </figure>
+        <figure>
+          <img src="photos/instaletion.webp" alt="Computer Installation" />
+          <figcaption>Computer installation</figcaption>
+        </figure>
+        <figure>
+          <img src="photos/repairing.webp" alt="Computer Repairing" />
+          <figcaption>Computer repairing</figcaption>
+        </figure>
+        <figure>
+          <img src="photos/anlytics.webp" alt="Data Analytics" />
+          <figcaption>Data Analytics</figcaption>
+        </figure>
+        <figure>
+          <img src="photos/security.webp" alt="Cybersecurity Services" />
+          <figcaption>Cybersecurity Services</figcaption>
+        </figure>
+        <figure>
+          <img src="photos/cloud.webp" alt="Cloud Solutions" />
+          <figcaption>Cloud Solutions</figcaption>
+        </figure>
+        <figure>
+          <img src="photos/accesories.jpg " alt="accesories " />
+          <figcaption>accesories </figcaption>
+        </figure>
+        <figure>
+          <img src="photos/mouse.jpg " alt="mouse " />
+          <figcaption>mouse </figcaption>
+        </figure>
+        <figure>
+          <img src="photos/sarta.jpg " alt="sarta cables  " />
+          <figcaption>sarta cables</figcaption>
+        </figure>
+         <figure>
+          <img src="photos/server installation.webp  " alt=" server installation " />
+          <figcaption> server installation</figcaption>
+        </figure>
+         <figure>
+          <img src=" photos/ram.webp " alt=" ram  " />
+          <figcaption>ram </figcaption>
+        </figure>
+         <figure>
+          <img src="photos/motherboard.webp " alt="motherboard  " />
+          <figcaption>motherboard</figcaption>
+        </figure>
+         <figure>
+          <img src="photos/harddisk.webp " alt="harddisk  " />
+          <figcaption>harddisk</figcaption>
+        </figure>
+         <figure>
+          <img src="photos/battery replacement.webp" alt="  battery replacement" />
+          <figcaption>battery replacement </figcaption>
+        </figure>
+         <figure>
+          <img src="photos/ssd.webp" alt="ssd  " />
+          <figcaption>ssd </figcaption>
+        </figure>
+         
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 LGK TECH SOLUTIONS</p>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
+      const navLinks = document.getElementById('nav-links');
+
+      menuBtn.addEventListener('click', () => {
+        const isActive = navLinks.classList.toggle('active');
+        // toggle aria-expanded attribute
+        menuBtn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+
+        // Manage tabindex for accessibility
+        const links = navLinks.querySelectorAll('a');
+        links.forEach((link) => {
+          link.tabIndex = isActive ? 0 : -1;
+        });
+      });
+
+      // Close nav menu if clicking outside
+      document.addEventListener('click', (event) => {
+        if (
+          navLinks.classList.contains('active') &&
+          !navLinks.contains(event.target) &&
+          !menuBtn.contains(event.target)
+        ) {
+          navLinks.classList.remove('active');
+          menuBtn.setAttribute('aria-expanded', 'false');
+          const links = navLinks.querySelectorAll('a');
+          links.forEach((link) => (link.tabIndex = -1));
+        }
+      });
+
+      // Close nav menu on pressing Escape key
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && navLinks.classList.contains('active')) {
+          navLinks.classList.remove('active');
+          menuBtn.setAttribute('aria-expanded', 'false');
+          const links = navLinks.querySelectorAll('a');
+          links.forEach((link) => (link.tabIndex = -1));
+          menuBtn.focus();
+        }
+      });
+
+      // Initially hide nav links from keyboard navigation
+      const links = navLinks.querySelectorAll('a');
+      links.forEach((link) => (link.tabIndex = -1));
+    });
+  </script>
+</body>
+</html>
