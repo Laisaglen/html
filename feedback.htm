@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback | KNP Smart Agriculture</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+    <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="feedback.html">Feedback</a>
+    <a href="contacts.html">Contacts</a>
+</nav>
+
+
+<!-- NAVIGATION -->
+<header class="hero">
+    <div class="hero-overlay">
+        <h1>🌿 KNP Smart Agriculture</h1>
+        <p>We value your feedback</p>
+    </div>
+</header>
+
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+   <div class="star-rating">
+
+        <h2>Send Us Your Feedback</h2>
+        <p>Help us improve modern farming solutions by sharing your experience.</p>
+
+        <form id="feedbackForm">
+
+            <label for="name">Name</label>
+            <textarea id="message" placeholder="Enter your name here..."></textarea>
+            <label>Rate Our Service</label>
+
+            <div class="star-rating">
+                <input type="radio" id="star5" name="rating" value="5">
+                <label for="star5">★</label>
+
+                <input type="radio" id="star4" name="rating" value="4">
+                <label for="star4">★</label>
+
+                <input type="radio" id="star3" name="rating" value="3">
+                <label for="star3">★</label>
+
+                <input type="radio" id="star2" name="rating" value="2">
+                <label for="star2">★</label>
+
+                <input type="radio" id="star1" name="rating" value="1">
+                <label for="star1">★</label>
+            </div>
+
+            <label for="message">Message</label>
+            <textarea id="message" placeholder="Write your feedback here..."></textarea>
+
+            <button type="button" onclick="submitFeedback()">
+                Submit Feedback
+            </button>
+
+        </form>
+
+    </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+    <p>Powered by LGK TECH SOLUTIONS</p>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
