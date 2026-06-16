@@ -1,44 +1,108 @@
-LAISA GLEN KIMUNGUI
+ ```java
+public class Portfolio {
 
-Computer Scientist passionate about technology, software development, and problem solving.
+    public static void main(String[] args) {
 
-CONTACT INFORMATION
+        System.out.println("=================================");
+        System.out.println("      LAISA GLEN KIMUNGUI");
+        System.out.println("=================================\n");
 
-Phone: +254714468889
+        System.out.println("Computer Scientist passionate about technology,");
+        System.out.println("software development, and problem solving.\n");
 
-WhatsApp: +254714468889
+        System.out.println("CONTACT INFORMATION");
+        System.out.println("-------------------");
+        System.out.println("Phone: +254714468889");
+        System.out.println("WhatsApp: +254714468889");
+        System.out.println("Email: glenklaisa@gmail.com\n");
 
-Email: glenklaisa@gmail.com
+        System.out.println("ABOUT ME");
+        System.out.println("--------");
+        System.out.println("I am a Computer Scientist with a strong passion");
+        System.out.println("for technology, software development, and");
+        System.out.println("innovative problem-solving. I enjoy building");
+        System.out.println("efficient digital solutions, learning new");
+        System.out.println("technologies, and contributing to impactful projects.\n");
 
+        System.out.println("SKILLS");
+        System.out.println("------");
+        System.out.println("• C");
+        System.out.println("• C++");
+        System.out.println("• Python");
+        System.out.println("• Java");
+        System.out.println("• JavaScript");
+        System.out.println("• HTML & CSS");
+        System.out.println("• PHP");
+        System.out.println("• SQL");
+        System.out.println("• Database Management");
+        System.out.println("• Web Development");
+        System.out.println("• Software Engineering");
+        System.out.println("• Data Structures");
+        System.out.println("• Algorithms");
+        System.out.println("• Git & GitHub");
+        System.out.println("• Problem Solving\n");
 
-ABOUT ME
+        System.out.println("CAREER GOALS");
+        System.out.println("------------");
+        System.out.println("1. Develop innovative software solutions that solve real-world problems.");
+        System.out.println("2. Contribute to open-source and community-driven technology projects.");
+        System.out.println("3. Advance expertise in artificial intelligence and data science.");
+        System.out.println("4. Build scalable and secure applications for global users.");
+        System.out.println("5. Continuously learn and adapt to emerging technologies.");
+    }
+}
+```
 
-I am a Computer Scientist with a strong passion for technology, software development, and innovative problem-solving. I enjoy building efficient digital solutions, learning new technologies, and contributing to impactful projects.
+public class Portfolio {
 
+    public static void main(String[] args) {
 
-SKILLS
+        System.out.println("=================================");
+        System.out.println("      LAISA GLEN KIMUNGUI");
+        System.out.println("=================================\n");
 
-c
-c++
-Python
-Java
-JavaScript
-HTML & CSS
-php
-sql
-Database Management
-Web Development
-Software Engineering
-Data Structures
-Algorithms
-Git & GitHub
-Problem Solving
+        System.out.println("Computer Scientist passionate about technology,");
+        System.out.println("software development, and problem solving.\n");
 
-CAREER GOALS
+        System.out.println("CONTACT INFORMATION");
+        System.out.println("-------------------");
+        System.out.println("Phone: +254714468889");
+        System.out.println("WhatsApp: +254714468889");
+        System.out.println("Email: glenklaisa@gmail.com\n");
 
-Develop innovative software solutions that solve real-world problems.
-Contribute to open-source and community-driven technology projects.
-Advance expertise in artificial intelligence and data science.
-Build scalable and secure applications for global users.
-Continuously learn and adapt to emerging technologies.
- 
+        System.out.println("ABOUT ME");
+        System.out.println("--------");
+        System.out.println("I am a Computer Scientist with a strong passion");
+        System.out.println("for technology, software development, and");
+        System.out.println("innovative problem-solving. I enjoy building");
+        System.out.println("efficient digital solutions, learning new");
+        System.out.println("technologies, and contributing to impactful projects.\n");
+
+        System.out.println("SKILLS");
+        System.out.println("------");
+        System.out.println("• C");
+        System.out.println("• C++");
+        System.out.println("• Python");
+        System.out.println("• Java");
+        System.out.println("• JavaScript");
+        System.out.println("• HTML & CSS");
+        System.out.println("• PHP");
+        System.out.println("• SQL");
+        System.out.println("• Database Management");
+        System.out.println("• Web Development");
+        System.out.println("• Software Engineering");
+        System.out.println("• Data Structures");
+        System.out.println("• Algorithms");
+        System.out.println("• Git & GitHub");
+        System.out.println("• Problem Solving\n");
+
+        System.out.println("CAREER GOALS");
+        System.out.println("------------");
+        System.out.println("1. Develop innovative software solutions that solve real-world problems.");
+        System.out.println("2. Contribute to open-source and community-driven technology projects.");
+        System.out.println("3. Advance expertise in artificial intelligence and data science.");
+        System.out.println("4. Build scalable and secure applications for global users.");
+        System.out.println("5. Continuously learn and adapt to emerging technologies.");
+    }
+}
+```
