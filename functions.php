@@ -1,167 +1,76 @@
 <?php
-// api/functions.php - API helper functions
+// Additional helper functions
 
-/**
- * Log API activity
- */
-function logApiActivity($action, $data = null) {
-    $log_dir = __DIR__ . '/logs/';
-    if (!is_dir($log_dir)) {
-        mkdir($log_dir, 0755, true);
-    }
-    
-    $log_file = $log_dir . 'api_' . date('Y-m-d') . '.log';
-    $timestamp = date('Y-m-d H:i:s');
-    $ip = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
-    $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
-    
-    $log_entry = "[$timestamp] IP: $ip | Action: $action | UA: $user_agent";
-    if ($data) {
-        $log_entry .= " | Data: " . json_encode($data);
-    }
-    $log_entry .= PHP_EOL;
-    
-    error_log($log_entry, 3, $log_file);
+function getFriendsList($user_id) {
+    $db = Database::getInstance()->getConnection();
+    $stmt = $db->prepare("
+        SELECT u.* FROM users u
+        JOIN friends f ON (f.user_id = ? AND f.friend_user_id = u.user_id AND f.status = 'accepted')
+        UNION
+        SELECT u.* FROM users u
+        JOIN friends f ON (f.user_id = u.user_id AND f.friend_user_id = ? AND f.status = 'accepted')
+    ");
+    $stmt->execute([$user_id, $user_id]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-/**
- * Validate API request
- */
-function validateApiRequest($required_fields = []) {
-    $errors = [];
-    
-    foreach ($required_fields as $field) {
-        if (!isset($_POST[$field]) || empty(trim($_POST[$field]))) {
-            $errors[] = "Missing required field: $field";
-        }
-    }
-    
-    if (!empty($errors)) {
-        return [
-            'valid' => false,
-            'errors' => $errors
-        ];
-    }
-    
-    return ['valid' => true];
+function getFriendCount($user_id) {
+    $db = Database::getInstance()->getConnection();
+    $stmt = $db->prepare("
+        SELECT COUNT(*) as count FROM friends 
+        WHERE (user_id = ? OR friend_user_id = ?) AND status = 'accepted'
+    ");
+    $stmt->execute([$user_id, $user_id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC)['count'];
 }
 
-/**
- * Generate API token
- */
-function generateApiToken($length = 32) {
-    return bin2hex(random_bytes($length));
+function getUnreadMessagesCount($user_id) {
+    $db = Database::getInstance()->getConnection();
+    $stmt = $db->prepare("SELECT COUNT(*) as count FROM messages WHERE receiver_id = ? AND is_read = FALSE");
+    $stmt->execute([$user_id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC)['count'];
 }
 
-/**
- * Verify API token
- */
-function verifyApiToken($token) {
-    // Implement your token verification logic
-    // Example: check against database or environment variable
-    $valid_tokens = [
-        getenv('API_TOKEN') ?: 'LGK_API_2026'
-    ];
-    
-    return in_array($token, $valid_tokens);
+function getPendingFriendRequests($user_id) {
+    $db = Database::getInstance()->getConnection();
+    $stmt = $db->prepare("SELECT COUNT(*) as count FROM friends WHERE friend_user_id = ? AND status = 'pending'");
+    $stmt->execute([$user_id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC)['count'];
 }
 
-/**
- * Send API response
- */
-function sendApiResponse($data, $status_code = 200) {
-    http_response_code($status_code);
-    header('Content-Type: application/json');
-    header('Access-Control-Allow-Origin: *');
-    
-    echo json_encode($data, JSON_PRETTY_PRINT);
-    exit();
+function getActiveUsers() {
+    $db = Database::getInstance()->getConnection();
+    $stmt = $db->query("SELECT COUNT(*) as count FROM users WHERE last_active > DATE_SUB(NOW(), INTERVAL 5 MINUTE)");
+    return $stmt->fetch(PDO::FETCH_ASSOC)['count'];
 }
 
-/**
- * Handle API error
- */
-function sendApiError($message, $code = 400, $details = null) {
-    $response = [
-        'success' => false,
-        'error' => $message,
-        'code' => $code,
-        'timestamp' => date('Y-m-d H:i:s')
-    ];
+function formatTimeAgo($timestamp) {
+    $time_ago = strtotime($timestamp);
+    $current_time = time();
+    $time_difference = $current_time - $time_ago;
+    $seconds = $time_difference;
     
-    if ($details) {
-        $response['details'] = $details;
-    }
+    $minutes = round($seconds / 60);
+    $hours = round($seconds / 3600);
+    $days = round($seconds / 86400);
+    $weeks = round($seconds / 604800);
+    $months = round($seconds / 2629440);
+    $years = round($seconds / 31553280);
     
-    sendApiResponse($response, $code);
-}
-
-/**
- * Get request data (JSON or form)
- */
-function getRequestData() {
-    $content_type = $_SERVER['CONTENT_TYPE'] ?? '';
-    
-    if (strpos($content_type, 'application/json') !== false) {
-        $json = file_get_contents('php://input');
-        return json_decode($json, true);
-    }
-    
-    return $_POST;
-}
-
-/**
- * Sanitize input data
- */
-function sanitizeInput($data) {
-    if (is_array($data)) {
-        return array_map('sanitizeInput', $data);
-    }
-    
-    return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
-}
-
-/**
- * Rate limit API calls
- */
-function rateLimit($key, $limit = 60, $window = 60) {
-    $cache_dir = __DIR__ . '/cache/';
-    if (!is_dir($cache_dir)) {
-        mkdir($cache_dir, 0755, true);
-    }
-    
-    $file = $cache_dir . 'rate_limit_' . md5($key) . '.json';
-    $now = time();
-    
-    if (file_exists($file)) {
-        $data = json_decode(file_get_contents($file), true);
-        
-        // Clean old entries
-        $data['requests'] = array_filter($data['requests'], function($time) use ($now, $window) {
-            return $time > ($now - $window);
-        });
-        
-        if (count($data['requests']) >= $limit) {
-            return [
-                'allowed' => false,
-                'limit' => $limit,
-                'remaining' => 0,
-                'reset' => $data['requests'][0] + $window
-            ];
-        }
+    if ($seconds <= 60) {
+        return "Just Now";
+    } else if ($minutes <= 60) {
+        return ($minutes == 1) ? "1 minute ago" : "$minutes minutes ago";
+    } else if ($hours <= 24) {
+        return ($hours == 1) ? "1 hour ago" : "$hours hours ago";
+    } else if ($days <= 7) {
+        return ($days == 1) ? "Yesterday" : "$days days ago";
+    } else if ($weeks <= 4.3) {
+        return ($weeks == 1) ? "1 week ago" : "$weeks weeks ago";
+    } else if ($months <= 12) {
+        return ($months == 1) ? "1 month ago" : "$months months ago";
     } else {
-        $data = ['requests' => []];
+        return ($years == 1) ? "1 year ago" : "$years years ago";
     }
-    
-    // Add current request
-    $data['requests'][] = $now;
-    file_put_contents($file, json_encode($data));
-    
-    return [
-        'allowed' => true,
-        'limit' => $limit,
-        'remaining' => $limit - count($data['requests']),
-        'reset' => $data['requests'][0] + $window
-    ];
 }
 ?>
