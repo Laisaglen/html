@@ -1,254 +1,287 @@
-// Subscribe to newsletter
-async function subscribeToNewsletter(email, name = '') {
-    const formData = new FormData();
-    formData.append('email', email);
-    formData.append('name', name);
-    
-    try {
-        const response = await fetch('/lgk/api/subscribe.php', {
-            method: 'POST',
-            body: formData
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showToast('✅ ' + result.message, 'success');
-        } else {
-            showToast('❌ ' + result.message, 'error');
-        }
-        
-        return result;
-    } catch (error) {
-        showToast('❌ Network error. Please try again.', 'error');
-        return { success: false, message: 'Network error' };
-    }
-}
-// Subscribe to newsletter
-async function subscribeToNewsletter(email, name = '') {
-    const formData = new FormData();
-    formData.append('email', email);
-    formData.append('name', name);
-    
-    try {
-        const response = await fetch('/lgk/api/subscribe.php', {
-            method: 'POST',
-            body: formData
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showToast('✅ ' + result.message, 'success');
-        } else {
-            showToast('❌ ' + result.message, 'error');
-        }
-        
-        return result;
-    } catch (error) {
-        showToast('❌ Network error. Please try again.', 'error');
-        return { success: false, message: 'Network error' };
-    }
-}
-// Check system status
-async function checkSystemStatus() {
-    try {
-        const response = await fetch('/lgk/api/check.php?action=status');
-        const data = await response.json();
-        
-        console.log('System Status:', data);
-        return data;
-    } catch (error) {
-        console.error('Status check failed:', error);
-        return null;
-    }
-}
-// API Logout
-async function apiLogout() {
-    try {
-        const response = await fetch('/lgk/api/logout.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            window.location.href = '/lgk/admin/login.php?logout=success';
-        }
-        
-        return result;
-    } catch (error) {
-        console.error('Logout failed:', error);
-        return { success: false };
-    }
-}
-// Check if user is authenticated
-async function checkAuth() {
-    try {
-        const response = await fetch('/lgk/api/check.php?action=auth');
-        const data = await response.json();
-        
-        return data.authenticated;
-    } catch (error) {
-        return false;
-    }
-}
-// Get system statistics (requires authentication)
-async function getSystemStats() {
-    try {
-        const response = await fetch('/lgk/api/check.php?action=stats');
-        const data = await response.json();
-        
-        if (data.success) {
-            return data.stats;
-        }
-        return null;
-    } catch (error) {
-        console.error('Failed to get stats:', error);
-        return null;
-    }
-}
-// Newsletter subscription handler
-document.addEventListener('DOMContentLoaded', function() {
-    const newsletterForm = document.getElementById('newsletterForm');
-    
-    if (newsletterForm) {
-        newsletterForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const email = this.querySelector('input[name="email"]');
-            const name = this.querySelector('input[name="name"]');
-            const consent = this.querySelector('input[name="consent"]');
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const messageContainer = document.getElementById('newsletterMessage');
-            
-            // Disable button
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subscribing...';
-            
-            // Clear previous messages
-            if (messageContainer) {
-                messageContainer.className = 'message-container';
-                messageContainer.textContent = '';
-            }
-            
-            try {
-                const formData = new FormData();
-                formData.append('email', email.value.trim());
-                formData.append('name', name ? name.value.trim() : '');
-                formData.append('consent', consent ? consent.checked : false);
-                formData.append('source', 'footer');
-                
-                const response = await fetch('/lgk/api/subscribe.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showMessage(result.message, 'success');
-                    email.value = '';
-                    if (name) name.value = '';
-                    if (consent) consent.checked = false;
-                    
-                    // Trigger success animation
-                    if (submitBtn) {
-                        submitBtn.style.background = '#00ffa6';
-                        submitBtn.textContent = '✅ Subscribed!';
-                        setTimeout(() => {
-                            submitBtn.style.background = '';
-                        }, 3000);
-                    }
-                } else {
-                    showMessage(result.message || 'Subscription failed. Please try again.', 'error');
-                }
-            } catch (error) {
-                console.error('Subscription error:', error);
-                showMessage('Network error. Please check your connection and try again.', 'error');
-            } finally {
-                // Re-enable button
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Subscribe';
-            }
-        });
-    }
-    
-    function showMessage(message, type) {
-        const container = document.getElementById('newsletterMessage');
-        if (container) {
-            container.textContent = message;
-            container.className = 'message-container ' + type;
-            container.style.display = 'block';
-            
-            // Auto-hide after 5 seconds
-            setTimeout(() => {
-                container.style.display = 'none';
-            }, 5000);
-        }
-    }
-});
-// In main.js - Popup newsletter
-document.addEventListener('DOMContentLoaded', function() {
-    // Show popup after 5 seconds
+$(document).ready(function() {
+    // Auto-hide alerts
     setTimeout(function() {
-        showNewsletterPopup();
+        $('.alert').fadeOut('slow');
     }, 5000);
-    
-    // Show popup on exit intent
-    document.addEventListener('mouseleave', function(e) {
-        if (e.clientY < 0) {
-            showNewsletterPopup();
+
+    // Like post functionality
+    $('.like-btn').click(function() {
+        const postId = $(this).data('post-id');
+        const btn = $(this);
+        
+        $.ajax({
+            url: 'ajax/like_post.php',
+            method: 'POST',
+            data: { post_id: postId },
+            success: function(response) {
+                const data = JSON.parse(response);
+                if (data.success) {
+                    const likeCount = btn.find('.like-count');
+                    likeCount.text(data.likes);
+                    btn.toggleClass('liked');
+                }
+            }
+        });
+    });
+
+    // Share post functionality
+    $('.share-btn').click(function() {
+        const postId = $(this).data('post-id');
+        const btn = $(this);
+        
+        $.ajax({
+            url: 'ajax/share_post.php',
+            method: 'POST',
+            data: { post_id: postId },
+            success: function(response) {
+                const data = JSON.parse(response);
+                if (data.success) {
+                    const shareCount = btn.find('.share-count');
+                    shareCount.text(data.shares);
+                    alert('Post shared successfully!');
+                }
+            }
+        });
+    });
+
+    // Friend request functionality
+    $('.add-friend-btn').click(function() {
+        const userId = $(this).data('user-id');
+        const btn = $(this);
+        
+        $.ajax({
+            url: 'ajax/add_friend.php',
+            method: 'POST',
+            data: { user_id: userId },
+            success: function(response) {
+                const data = JSON.parse(response);
+                if (data.success) {
+                    btn.text('Friend Request Sent');
+                    btn.prop('disabled', true);
+                    btn.removeClass('btn-primary').addClass('btn-success');
+                }
+            }
+        });
+    });
+
+    // Chat functionality
+    function loadMessages(receiverId) {
+        $.ajax({
+            url: 'ajax/get_messages.php',
+            method: 'GET',
+            data: { receiver_id: receiverId },
+            success: function(response) {
+                const data = JSON.parse(response);
+                if (data.success) {
+                    const messagesContainer = $('#chat-messages');
+                    messagesContainer.html(data.html);
+                    messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
+                }
+            }
+        });
+    }
+
+    // Send message
+    $('#send-message-btn').click(function() {
+        const receiverId = $('#receiver-id').val();
+        const message = $('#message-input').val();
+        const fileInput = $('#file-input')[0];
+        const formData = new FormData();
+
+        formData.append('receiver_id', receiverId);
+        formData.append('message', message);
+        
+        if (fileInput.files.length > 0) {
+            formData.append('file', fileInput.files[0]);
+        }
+
+        $.ajax({
+            url: 'ajax/send_message.php',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                const data = JSON.parse(response);
+                if (data.success) {
+                    $('#message-input').val('');
+                    $('#file-input').val('');
+                    loadMessages(receiverId);
+                }
+            }
+        });
+    });
+
+    // Real-time message polling
+    let lastMessageId = 0;
+    function pollMessages() {
+        const receiverId = $('#receiver-id').val();
+        if (receiverId) {
+            $.ajax({
+                url: 'ajax/poll_messages.php',
+                method: 'GET',
+                data: { 
+                    receiver_id: receiverId,
+                    last_id: lastMessageId
+                },
+                success: function(response) {
+                    const data = JSON.parse(response);
+                    if (data.success && data.new_messages) {
+                        loadMessages(receiverId);
+                    }
+                }
+            });
+        }
+    }
+
+    // Poll every 3 seconds
+    setInterval(pollMessages, 3000);
+
+    // Image preview before upload
+    function previewImage(input, previewId) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                $(previewId).attr('src', e.target.result).show();
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $('#profile-photo-input').change(function() {
+        previewImage(this, '#profile-photo-preview');
+    });
+
+    $('#cover-photo-input').change(function() {
+        previewImage(this, '#cover-photo-preview');
+    });
+
+    // Market search
+    $('#search-products').on('keyup', function() {
+        const searchTerm = $(this).val();
+        $.ajax({
+            url: 'ajax/search_products.php',
+            method: 'GET',
+            data: { search: searchTerm },
+            success: function(response) {
+                const data = JSON.parse(response);
+                if (data.success) {
+                    $('#product-grid').html(data.html);
+                }
+            }
+        });
+    });
+
+    // Friend search
+    $('#search-friends').on('keyup', function() {
+        const searchTerm = $(this).val();
+        $.ajax({
+            url: 'ajax/search_friends.php',
+            method: 'GET',
+            data: { search: searchTerm },
+            success: function(response) {
+                const data = JSON.parse(response);
+                if (data.success) {
+                    $('#friends-list').html(data.html);
+                }
+            }
+        });
+    });
+
+    // Settings navigation
+    $('.settings-tab').click(function() {
+        const tab = $(this).data('tab');
+        $('.settings-tab').removeClass('active');
+        $(this).addClass('active');
+        $('.settings-panel').hide();
+        $('#' + tab + '-panel').show();
+    });
+
+    // Auto-expire counter for posts
+    function updateExpiryTimes() {
+        $('.post-expiry').each(function() {
+            const expiryTime = new Date($(this).data('expiry')).getTime();
+            const now = new Date().getTime();
+            const diff = expiryTime - now;
+            
+            if (diff > 0) {
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                $(this).text(`Expires in ${hours}h ${minutes}m`);
+            } else {
+                $(this).text('Expired');
+                $(this).closest('.post-card').fadeOut();
+            }
+        });
+    }
+
+    // Update expiry times every minute
+    setInterval(updateExpiryTimes, 60000);
+    updateExpiryTimes();
+
+    // Admin report generation
+    $('#generate-report-btn').click(function() {
+        $.ajax({
+            url: 'ajax/generate_report.php',
+            method: 'GET',
+            success: function(response) {
+                const data = JSON.parse(response);
+                if (data.success) {
+                    window.open(data.report_url, '_blank');
+                }
+            }
+        });
+    });
+
+    // Video upload validation
+    $('#video-input').change(function() {
+        const file = this.files[0];
+        if (file) {
+            if (file.size > 30 * 1024 * 1024) {
+                alert('Video file size cannot exceed 30MB');
+                this.value = '';
+                return false;
+            }
+            if (!file.type.startsWith('video/')) {
+                alert('Please select a valid video file');
+                this.value = '';
+                return false;
+            }
+        }
+    });
+
+    // Image upload validation
+    $('.image-input').change(function() {
+        const file = this.files[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image file size cannot exceed 5MB');
+                this.value = '';
+                return false;
+            }
+            if (!file.type.startsWith('image/')) {
+                alert('Please select a valid image file');
+                this.value = '';
+                return false;
+            }
         }
     });
 });
 
-function showNewsletterPopup() {
-    // Check if already shown
-    if (sessionStorage.getItem('newsletter_shown')) return;
-    
-    // Create popup
-    const popup = document.createElement('div');
-    popup.className = 'newsletter-popup';
-    popup.innerHTML = `
-        <div class="popup-overlay"></div>
-        <div class="popup-content">
-            <button class="popup-close">&times;</button>
-            <div class="popup-icon">
-                <i class="fas fa-envelope"></i>
-            </div>
-            <h3>Subscribe to Our Newsletter</h3>
-            <p>Get the latest tech tips and exclusive offers.</p>
-            
-            <form class="newsletter-form" id="newsletterFormPopup" method="POST" action="/lgk/api/subscribe.php">
-                <div class="form-group">
-                    <input type="email" name="email" placeholder="Your email address" required>
-                </div>
-                <button type="submit" class="btn-primary">Subscribe Now</button>
-                <div id="newsletterMessagePopup" class="message-container"></div>
-                <div class="form-group checkbox" style="display:none;">
-                    <label>
-                        <input type="checkbox" name="consent" value="1" checked>
-                        I agree to receive marketing emails
-                    </label>
-                </div>
-            </form>
-        </div>
-    `;
-    
-    document.body.appendChild(popup);
-    
-    // Close popup
-    popup.querySelector('.popup-close').addEventListener('click', function() {
-        popup.remove();
-        sessionStorage.setItem('newsletter_shown', 'true');
-    });
-    
-    popup.querySelector('.popup-overlay').addEventListener('click', function() {
-        popup.remove();
-        sessionStorage.setItem('newsletter_shown', 'true');
-    });
+// Notification functions
+function showNotification(message, type = 'success') {
+    const notification = $('<div class="notification ' + type + '">' + message + '</div>');
+    $('body').append(notification);
+    notification.fadeIn();
+    setTimeout(function() {
+        notification.fadeOut(function() {
+            $(this).remove();
+        });
+    }, 5000);
 }
+
+// AJAX error handling
+$(document).ajaxError(function(event, jqXHR, settings, error) {
+    console.error('AJAX Error:', error);
+    showNotification('An error occurred. Please try again.', 'error');
+});
